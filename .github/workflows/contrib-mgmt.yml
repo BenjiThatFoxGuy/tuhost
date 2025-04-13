@@ -1,0 +1,64 @@
+name: Contribution management
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+  discussion:
+    types: [created]
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+permissions:
+  issues: write
+  pull-requests: write
+  discussions: write
+
+concurrency:
+  group: contribution-management-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  handle-contributions:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Close Issue
+      if: github.event_name == 'issues'
+      run: |
+        gh issue close ${{ github.event.issue.number }} --repo ${{ github.repository }} --comment "This repository does not accept issues."
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Close Pull Request (Non-Owner)
+      if: |
+        github.event_name == 'pull_request' &&
+        github.actor != github.repository_owner
+      run: |
+        gh pr close ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --comment "This repository does not accept pull requests from contributors."
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Close Discussion
+      if: github.event_name == 'discussion'
+      run: |
+        gh discussion close ${{ github.event.discussion.number }} --repo ${{ github.repository }} --comment "This repository does not accept discussions."
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  auto-merge-owner:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issue_comment' || github.event_name == 'pull_request_review_comment'
+    steps:
+    - name: Auto-merge PR on "merge" comment by repo owner
+      if: |
+        github.actor == github.repository_owner &&
+        github.event.comment.body == 'merge' &&
+        github.event.issue.pull_request
+      run: |
+        PR_NUMBER=$(echo "${{ github.event.issue.number }}")
+        gh pr merge $PR_NUMBER --repo ${{ github.repository }} --merge
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
