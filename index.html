@@ -3,25 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to the TUHost Repository</title>
+    <title>TUHost - Tower Unite CDN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        .hidden-easter-egg {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+        .show-easter-egg {
+            opacity: 1;
+        }
+    </style>
 </head>
-<body>
-    <h1>Welcome to the TUHost Repository</h1>
-    <p>This page hosts files used for loading images, custom webpages, and media into my Tower Unite condos. If you're seeing this in Tower Unite, it means something went wrong or you typed the URL incorrectly.</p>
-    
-    <h2>What is Tower Unite?</h2>
-    <p><em>Tower Unite</em> is a multiplayer virtual world that allows you to load custom media, websites, and images into your condo using a built-in Chromium browser. This repository is a Tower Unite fork of my original VRChat host, adapted for the features available in Tower Unite. While it allows loading images and custom media, string loading is not supported in Tower Unite like it is in VRChat.</p>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+    <div class="container mx-auto px-4 py-12 flex-grow">
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-bold text-purple-400 mb-4">TUHost</h1>
+            <p class="text-xl text-gray-300">Content Delivery Network for Tower Unite Condos</p>
+        </header>
 
-    <h2>Repository Purpose</h2>
-    <p>This repository houses public files specifically for loading images, custom webpages, and media into my Tower Unite condos. It is not open for external contributions such as issues, pull requests, or discussions.</p>
+        <main class="max-w-3xl mx-auto">
+            <section class="bg-gray-800 rounded-lg p-6 mb-8 shadow-lg">
+                <h2 class="text-2xl font-semibold text-purple-300 mb-4">About Tower Unite</h2>
+                <p class="mb-4">
+                    Tower Unite is a multiplayer virtual world where you can hang out with friends, play minigames, 
+                    and customize your own condo. It's a social experience with activities like golf, bowling, 
+                    arcade games, and more - all in a persistent online world.
+                </p>
+                <p>
+                    One of Tower Unite's best features is the ability to fully customize your condo with furniture, 
+                    decorations, and even custom media loaded from external sources like this CDN.
+                </p>
+            </section>
 
-    <h2>Important Note</h2>
-    <p>Since Tower Unite uses Chromium for displaying custom content, the page is loaded without any interactivity options. You cannot interact with the page (click buttons, etc.) — it is simply rendered as-is within your condo.</p>
+            <section class="bg-gray-800 rounded-lg p-6 mb-8 shadow-lg">
+                <h2 class="text-2xl font-semibold text-purple-300 mb-4">About TUHost</h2>
+                <p class="mb-4">
+                    This is a private CDN (Content Delivery Network) used to host files for custom Tower Unite condos 
+                    belonging to me and my friends. Tower Unite can load images, videos, audio, and web pages from 
+                    external sources like this one to display in your condo.
+                </p>
+                <p class="mb-4 text-yellow-200 font-medium">
+                    If you're seeing this page in-game, something went wrong - either the content couldn't load 
+                    properly or there was a mistyped URL. This page isn't meant to be viewed directly in Tower Unite.
+                </p>
+                <p class="text-gray-400 italic">
+                    This CDN uses GitHub Pages for hosting because GitHub is a trusted and reliable platform 
+                    for serving static content. The URLs are permanent and won't change unexpectedly.
+                </p>
+            </section>
 
-    <h3><a href="javascript:history.back()">Go back to where you came from</a></h3>
-    <h3><a href="https://status.mechapower.eu">Visit the MP status page</a></h3>
-    <h3><a href="https://the.benjifox.gay">Visit the main page</a></h3>
+            <section class="bg-gray-800 rounded-lg p-6 shadow-lg text-center">
+                <h2 class="text-2xl font-semibold text-purple-300 mb-4">How Content Works in Tower Unite</h2>
+                <p class="mb-4">
+                    When you add media to your condo in Tower Unite, you can provide URLs to images, videos, 
+                    or web pages. The game loads these through its built-in browser (CEF - Chromium Embedded Framework).
+                </p>
+                <p class="mb-4">
+                    Important note: While web pages will render in Tower Unite, you <span class="font-bold">cannot</span> 
+                    interact with them - no clicking, scrolling, or typing. They're display-only.
+                </p>
+                <div class="bg-gray-700 p-4 rounded inline-block">
+                    <p class="text-sm font-mono">Example media URL format:</p>
+                    <p class="text-sm font-mono text-purple-300">https://BenjiThatFoxGuy.GitHub.io/tuhost/path/to/file.png</p>
+                </div>
+            </section>
+        </main>
+    </div>
 
-    <h2>If you're trying to snoop - DON'T</h2>
+    <footer class="bg-gray-800 py-6 text-center text-gray-400 text-sm">
+        <p>TUHost CDN - Private content delivery for Tower Unite condos</p>
+        <p>Not affiliated with PixelTail Games or Tower Unite</p>
+    </footer>
+
+    <!-- Easter Egg - Catsacks are watching you -->
+    <div id="easterEgg" class="hidden-easter-egg">
+        <div class="bg-gray-800 p-4 rounded-lg shadow-xl border border-purple-500 max-w-xs">
+            <p class="text-sm mb-2">The Catsacks are staring at you...</p>
+            <!-- Replace this with your actual Catsack PNG -->
+            <img src="placeholder.png" alt="Catsack" class="w-24 h-24 mx-auto floating" id="catsackImage">
+            <p class="text-xs mt-2 text-gray-400">You weren't supposed to see this...</p>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is snooping (not viewing from Tower Unite)
+        if (!navigator.userAgent.includes('Tower')) {
+            // Show easter egg after a delay
+            setTimeout(() => {
+                const easterEgg = document.getElementById('easterEgg');
+                easterEgg.classList.add('show-easter-egg');
+                
+                // Make the catsack look around occasionally
+                const catsack = document.getElementById('catsackImage');
+                setInterval(() => {
+                    catsack.style.transform = `translateY(-5px) rotate(${Math.random() * 10 - 5}deg)`;
+                    setTimeout(() => {
+                        catsack.style.transform = 'translateY(0) rotate(0)';
+                    }, 1000);
+                }, 5000);
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
