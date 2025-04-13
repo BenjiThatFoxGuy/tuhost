@@ -9,6 +9,7 @@ on:
     types: [created]
 
 permissions:
+  contents: write
   issues: write
   pull-requests: write
   discussions: write
@@ -24,20 +25,22 @@ jobs:
       - name: Close Issue
         if: github.event_name == 'issues'
         run: |
-          gh issue close ${{ github.event.issue.number }} --repo ${{ github.repository }} --comment "This repository does not accept issues."
+          gh issue close ${{ github.event.issue.number }} \
+            --repo ${{ github.repository }} \
+            --comment "This repository does not accept issues."
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Handle Pull Request
         if: github.event_name == 'pull_request'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
           REPO_OWNER="$(cut -d'/' -f1 <<< "${{ github.repository }}")"
           PR_NUMBER="${{ github.event.pull_request.number }}"
           PR_BODY="${{ github.event.pull_request.body }}"
-
+          
           lowercase_body="$(echo "$PR_BODY" | tr '[:upper:]' '[:lower:]')"
 
           if [[ "$PR_AUTHOR" == "$REPO_OWNER" ]]; then
@@ -55,6 +58,8 @@ jobs:
       - name: Close Discussion
         if: github.event_name == 'discussion'
         run: |
-          gh discussion close ${{ github.event.discussion.number }} --repo ${{ github.repository }} --comment "This repository does not accept discussions."
+          gh discussion close ${{ github.event.discussion.number }} \
+            --repo ${{ github.repository }} \
+            --comment "This repository does not accept discussions."
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
